@@ -26,7 +26,12 @@ class FeeCalculationTest extends TestCase
 
         $fee = $calculator->calculate($secondApplication);
 
-        $this->assertEquals($fee, 300);
+        /**
+         * $fee = 300
+         * 300 + 3333 = 3633 -> round to five -> 3635
+         * 3635 - 3333 = 302
+         */
+        $this->assertEquals($fee, 302);
     }
 
     /** @test */

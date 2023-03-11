@@ -30,7 +30,7 @@ class LinearFeeCalculator implements FeeCalculator
 
         $fee = $linearFunction->findValue($amount);
 
-        return round($fee/5) * 5;
+        return round(($amount + $fee)/5) * 5 - $amount;
     }
 
     public function getNearestPoitnsFromArray($term, $amount): array
