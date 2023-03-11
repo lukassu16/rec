@@ -10,8 +10,12 @@ class LinearFunctionFormula implements FunctionFormula
     public $a;
     public $b;
     
-    public function findCoeficientsFromPoints($points)
+    public function findCoeficientsFromPoints(array $points)
     {
+        if ($points[0]['x'] == $points[1]['x']) {
+            throw new \Exception('Same x coordinates are not allowed');
+        }
+
         $this->a = ($points[0]['y'] - $points[1]['y']) /
             ($points[0]['x'] - $points[1]['x']);
 
