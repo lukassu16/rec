@@ -3,18 +3,22 @@
 namespace PragmaGoTech\Interview;
 
 use PragmaGoTech\Interview\Exceptions\RangeNotFoundException;
+use PragmaGoTech\Interview\Exceptions\WrongDataException;
 use PragmaGoTech\Interview\FeeCalculator;
 use PragmaGoTech\Interview\Functions\LinearFunctionFormula;
 use PragmaGoTech\Interview\Model\LoanProposal;
+use PragmaGoTech\Interview\Validators\LoanProposalValidator;
 
 class LinearFeeCalculator implements FeeCalculator
 {
     public function calculate(LoanProposal $application): float
     {
-        // validation...
         $term   = $application->term();
         $amount = $application->amount();
         
+        if (!LoanProposalValidator::validate($term, $amount))
+            throw new WrongDataException('Invalid data.');
+
         try {
             $points = $this->getNearestPoitnsFromArray($term, $amount);
         } catch (RangeNotFoundException $e) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use PragmaGoTech\Interview\App;
 use PragmaGoTech\Interview\Exceptions\RangeNotFoundException;
+use PragmaGoTech\Interview\Exceptions\WrongDataException;
 use PragmaGoTech\Interview\LinearFeeCalculator;
 use PragmaGoTech\Interview\Model\LoanProposal;
 
@@ -29,11 +30,23 @@ class FeeCalculationTest extends TestCase
     }
 
     /** @test */
-    public function range_not_found_exception_thrwon_where_amount_is_to_small()
+    public function wrong_data_exception_thrown_where_term_is_wrong()
     {
         $calculator = new LinearFeeCalculator();
 
-        $application = new LoanProposal(12, 500);
+        $application = new LoanProposal(9, 1000);
+
+        $this->expectException(WrongDataException::class);
+
+        $fee = $calculator->calculate($application);
+    }
+
+    /** @test */
+    public function range_not_found_exception_thrown_where_amount_is_to_small()
+    {
+        $calculator = new LinearFeeCalculator();
+
+        $application = new LoanProposal(12, 1000);
 
         $fee = $calculator->calculate($application);
 
@@ -41,7 +54,7 @@ class FeeCalculationTest extends TestCase
     }
 
     /** @test */
-    public function range_not_found_exception_thrwon_where_amount_is_to_big()
+    public function range_not_found_exception_thrown_where_amount_is_to_big()
     {
         $calculator = new LinearFeeCalculator();
 
@@ -58,7 +71,7 @@ class FeeCalculationTest extends TestCase
 
         $testFeeArray = array(
             12 => [
-                1000 => 120,
+                1200 => 120,
                 2000 => 140,
                 3000 => 150,
                 4000 => 150,
