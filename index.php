@@ -13,4 +13,3 @@ $application = new LoanProposal(24, 4440);
 $fee = $calculator->calculate($application);
 
 echo($fee);
-// die(var_dump(App::get('config')));

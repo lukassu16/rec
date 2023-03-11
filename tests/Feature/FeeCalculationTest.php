@@ -4,14 +4,58 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use PragmaGoTech\Interview\App;
-use PragmaGoTech\Interview\Functions\LinearFunctionFormula;
+use PragmaGoTech\Interview\Exceptions\RangeNotFoundException;
 use PragmaGoTech\Interview\LinearFeeCalculator;
 use PragmaGoTech\Interview\Model\LoanProposal;
 
 class FeeCalculationTest extends TestCase
 {
-    public function test_test_test()
+    /** @test */
+    public function fee_is_calculated_correctly_if_range_is_ok()
     {
+        $calculator = new LinearFeeCalculator();
+
+        $application = new LoanProposal(12, 2500);
+
+        $fee = $calculator->calculate($application);
+
+        $this->assertEquals($fee, 145);
+
+        $secondApplication = new LoanProposal(24, 3333);
+
+        $fee = $calculator->calculate($secondApplication);
+
+        $this->assertEquals($fee, 300);
+    }
+
+    /** @test */
+    public function range_not_found_exception_thrwon_where_amount_is_to_small()
+    {
+        $calculator = new LinearFeeCalculator();
+
+        $application = new LoanProposal(12, 500);
+
+        $fee = $calculator->calculate($application);
+
+        $this->assertEquals($fee, -1);
+    }
+
+    /** @test */
+    public function range_not_found_exception_thrwon_where_amount_is_to_big()
+    {
+        $calculator = new LinearFeeCalculator();
+
+        $application = new LoanProposal(12, 7500);
+
+        $fee = $calculator->calculate($application);
+
+        $this->assertEquals($fee, -1);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
         $testFeeArray = array(
             12 => [
                 1000 => 120,
@@ -34,19 +78,5 @@ class FeeCalculationTest extends TestCase
         );
 
         App::bind('config', $testFeeArray);
-
-        $calculator = new LinearFeeCalculator();
-
-        $application = new LoanProposal(12, 2500);
-
-        $fee = $calculator->calculate($application);
-
-        $this->assertEquals($fee, 145);
-
-        $secondApplication = new LoanProposal(24, 3333);
-
-        $fee = $calculator->calculate($secondApplication);
-
-        $this->assertEquals($fee, 300);
     }
 }
