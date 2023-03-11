@@ -3,6 +3,7 @@
 namespace PragmaGoTech\Interview;
 
 use PragmaGoTech\Interview\FeeCalculator;
+use PragmaGoTech\Interview\Functions\LinearFunctionFormula;
 use PragmaGoTech\Interview\Model\LoanProposal;
 
 class LinearFeeCalculator implements FeeCalculator
@@ -13,6 +14,18 @@ class LinearFeeCalculator implements FeeCalculator
         $term   = $application->term();
         $amount = $application->amount();
         
+        $points = $this->getNearestPoitnsFromArray($term, $amount);
+
+        $linearFunction = new LinearFunctionFormula();
+        $linearFunction->findCoeficientsFromPoints($points);
+
+        $fee = $linearFunction->findValue($amount);
+
+        return round($fee/5) * 5;
+    }
+
+    public function getNearestPoitnsFromArray($term, $amount): array
+    {
         $feePoints = App::get('config')[$term];
         
         $min = 
@@ -37,13 +50,16 @@ class LinearFeeCalculator implements FeeCalculator
 
         $feeForMin = $feePoints[$min];
         $feeForMax = $feePoints[$max];
-
-        // y = ax + b
-        $a = ($feeForMax - $feeForMin ) / ($max - $min);
-        $b = $feeForMin - $a * $min;
         
-        $fee = $a * $amount + $b;
-
-        return round($fee/5) * 5;
+        return [
+            0 => [
+                'x' => $max,
+                'y' => $feeForMax
+            ],
+            1 => [
+                'x' => $min,
+                'y' => $feeForMin,
+            ]
+        ];
     }
 }
